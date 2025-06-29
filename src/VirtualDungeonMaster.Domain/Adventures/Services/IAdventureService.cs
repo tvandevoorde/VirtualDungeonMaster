@@ -22,7 +22,7 @@ namespace VirtualDungeonMaster.Domain.Adventures.Services
         /// <summary>
         /// Ends a session explicitly.
         /// </summary>
-        Task EndSessionAsync(int sessionId, string reason = "completed", CancellationToken cancellationToken = default);
+        Task EndSessionAsync(int sessionId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Lists all active sessions for a given character.
