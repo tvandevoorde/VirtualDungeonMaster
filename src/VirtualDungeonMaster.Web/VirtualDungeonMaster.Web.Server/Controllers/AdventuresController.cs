@@ -37,10 +37,9 @@ namespace VirtualDungeonMaster.Web.Server.Controllers
 
         // POST: api/adventures/session/{sessionId}/end
         [HttpPost("session/{sessionId}/end")]
-        public async Task<IActionResult> EndSession(int sessionId, [FromBody] EndSessionRequest? request, CancellationToken cancellationToken)
+        public async Task<IActionResult> EndSession(int sessionId, CancellationToken cancellationToken)
         {
-            var reason = request?.Reason ?? "completed";
-            await _adventureService.EndSessionAsync(sessionId, reason, cancellationToken);
+            await _adventureService.EndSessionAsync(sessionId, cancellationToken);
             return NoContent();
         }
 
@@ -62,11 +61,6 @@ namespace VirtualDungeonMaster.Web.Server.Controllers
         public class SubmitTurnRequest
         {
             public string PlayerInput { get; set; } = string.Empty;
-        }
-
-        public class EndSessionRequest
-        {
-            public string? Reason { get; set; }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace VirtualDungeonMaster.Tests.CharacterTests
         {
             ICharactersRepository repo = Substitute.For<ICharactersRepository>();
             var character = new Character { Id = 4, Name = "New" };
-            repo.SaveAsync(character, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+            repo.SaveAsync(character, Arg.Any<CancellationToken>()).Returns(character);
             var service = new CharacterService(repo);
 
             Character result = await service.CreateAsync(character);
@@ -64,7 +64,7 @@ namespace VirtualDungeonMaster.Tests.CharacterTests
         {
             ICharactersRepository repo = Substitute.For<ICharactersRepository>();
             var character = new Character { Id = 5, Name = "Update" };
-            repo.SaveAsync(character, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+            repo.SaveAsync(character, Arg.Any<CancellationToken>()).Returns(character);
             var service = new CharacterService(repo);
 
             Character? result = await service.UpdateAsync(5, character);

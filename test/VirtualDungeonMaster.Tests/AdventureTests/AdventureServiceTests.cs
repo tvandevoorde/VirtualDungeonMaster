@@ -21,7 +21,7 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             charactersRepo.GetCharacterById(1, Arg.Any<CancellationToken>()).Returns(character);
             aiService.GenerateAdventureIntroAsync(character, "Epic Quest", Arg.Any<CancellationToken>()).Returns("Welcome!");
             AdventureSession? savedSession = null;
-            adventuresRepo.SaveAsync(Arg.Do<AdventureSession>(s => savedSession = s), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+            adventuresRepo.SaveAsync(Arg.Do<AdventureSession>(s => savedSession = s), Arg.Any<CancellationToken>()).Returns(callInfo => savedSession);
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
             AdventureSession session = await service.StartNewSessionAsync(character.Id, "Epic Quest");
@@ -82,7 +82,7 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             var session = new AdventureSession(1, "Test");
             adventuresRepo.GetAdventureSessionById(3, Arg.Any<CancellationToken>()).Returns(session);
             aiService.GenerateTurnResponseAsync(session, "go north", Arg.Any<CancellationToken>()).Returns("You go north.");
-            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(callInfo => Task.FromResult(session));
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
             Domain.Adventures.Narratives.NarrativeEvent result = await service.SubmitTurnAsync(3, "go north");
@@ -127,12 +127,12 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             ICharactersRepository charactersRepo = Substitute.For<ICharactersRepository>();
             var session = new AdventureSession(1, "Test");
             adventuresRepo.GetAdventureSessionById(4, Arg.Any<CancellationToken>()).Returns(session);
-            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(callInfo => Task.FromResult(session));
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
-            await service.EndSessionAsync(4, "completed");
+            await service.EndSessionAsync(4);
 
-            Assert.Equal(Domain.Adventures.AdventureStatus.Completed, session.Status);
+            Assert.Equal(AdventureStatus.Completed, session.Status);
             await adventuresRepo.Received().SaveAsync(session, Arg.Any<CancellationToken>());
         }
 
