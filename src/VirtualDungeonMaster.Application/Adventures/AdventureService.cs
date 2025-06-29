@@ -1,42 +1,40 @@
 ﻿using VirtualDungeonMaster.Application.Exceptions;
 using VirtualDungeonMaster.Domain.Adventures;
 using VirtualDungeonMaster.Domain.Adventures.Narratives;
+using VirtualDungeonMaster.Domain.Adventures.Repositories;
+using VirtualDungeonMaster.Domain.Adventures.Services;
 using VirtualDungeonMaster.Domain.AI;
+using VirtualDungeonMaster.Domain.Characters;
+using VirtualDungeonMaster.Domain.Characters.Repoositories;
 using VirtualDungeonMaster.Infrastructure.Entities.Adventures;
 using VirtualDungeonMaster.Infrastructure.Entities.Characters;
-using VirtualDungeonMaster.Infrastructure.Persistance;
 
 namespace VirtualDungeonMaster.Application.Adventures
 {
-    internal class AdventureService : IAdventureService
+    internal class AdventureService(IAiService aiService, IAdventuresRepository adventuresRepository, ICharactersRepository charactersRepository) : IAdventureService
     {
-        private readonly IAiService _aiService;
-        private readonly IAppDbContext _appDbContext;
-
-        public AdventureService(IAiService aiService, IAppDbContext appDbContext)
-        {
-            _aiService = aiService;
-            _appDbContext = appDbContext;
-        }
+        private readonly IAiService _aiService = aiService;
+        private readonly IAdventuresRepository _adventuresRepository = adventuresRepository;
+        private readonly ICharactersRepository _charactersRepository = charactersRepository;
 
         public async Task<AdventureSession> StartNewSessionAsync(int characterId, string? title = null, CancellationToken cancellationToken = default)
         {
-            var character = await _appDbContext.GetCharacterById(characterId, cancellationToken)
+            Character character = await _charactersRepository.GetCharacterById(characterId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(CharacterEntity), characterId);
             
-            var intro = await _aiService.GenerateAdventureIntroAsync(characterId, cancellationToken);
+            var intro = await _aiService.GenerateAdventureIntroAsync(character, title, cancellationToken);
 
             var session = new AdventureSession(characterId, title ?? "New Adventure");
             session.AddNarrativeEvent("Adventure started", intro);
 
-            await _appDbContext.SaveAsync(session, cancellationToken);
+            session = await _adventuresRepository.SaveAsync(session, cancellationToken);
 
             return session;
         }
 
         public async Task<AdventureSession?> GetSessionAsync(int sessionId, CancellationToken cancellationToken = default)
         {
-            var session = await _appDbContext.GetAdventureSessionById(sessionId, cancellationToken)
+            AdventureSession session = await _adventuresRepository.GetAdventureSessionById(sessionId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(AdventureSessionEntity), sessionId);
 
             return session;
@@ -44,7 +42,7 @@ namespace VirtualDungeonMaster.Application.Adventures
 
         public async Task<NarrativeEvent> SubmitTurnAsync(int sessionId, string playerInput, CancellationToken cancellationToken = default)
         {
-            var session = await _appDbContext.GetAdventureSessionById(sessionId, cancellationToken)
+            AdventureSession session = await _adventuresRepository.GetAdventureSessionById(sessionId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(AdventureSessionEntity), sessionId);
 
             if (!session.IsActive())
@@ -55,14 +53,14 @@ namespace VirtualDungeonMaster.Application.Adventures
             var response = await _aiService.GenerateTurnResponseAsync(session, playerInput, cancellationToken);
             session.AddNarrativeEvent(playerInput, response);
 
-            await _appDbContext.SaveAsync(session, cancellationToken);
+            await _adventuresRepository.SaveAsync(session, cancellationToken);
 
             return session.GetLastEvent()!;
         }
 
         public async Task EndSessionAsync(int sessionId, string reason = "completed", CancellationToken cancellationToken = default)
         {
-            var session = await _appDbContext.GetAdventureSessionById(sessionId, cancellationToken)
+            AdventureSession session = await _adventuresRepository.GetAdventureSessionById(sessionId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(AdventureSessionEntity), sessionId);
 
             if (!session.IsActive())
@@ -72,15 +70,15 @@ namespace VirtualDungeonMaster.Application.Adventures
 
             session.EndSession();
 
-            await _appDbContext.SaveAsync(session, cancellationToken);
+            await _adventuresRepository.SaveAsync(session, cancellationToken);
         }
 
         public async Task<IReadOnlyList<AdventureSession>> ListSessionsAsync(int characterId, CancellationToken cancellationToken = default)
         {
-            var character = await _appDbContext.GetCharacterById(characterId, cancellationToken)
+            Character character = await _charactersRepository.GetCharacterById(characterId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(CharacterEntity), characterId);
 
-            var sessions = await _appDbContext.GetAdventureSessionsForCharacter(characterId, cancellationToken);
+            IReadOnlyList<AdventureSession> sessions = await _adventuresRepository.GetAdventureSessionsForCharacter(characterId, cancellationToken);
 
             return sessions;
         }

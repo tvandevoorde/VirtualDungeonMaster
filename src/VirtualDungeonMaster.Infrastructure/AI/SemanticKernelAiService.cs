@@ -1,24 +1,28 @@
-﻿using Microsoft.SemanticKernel;
+﻿using System.Reflection;
+using Microsoft.SemanticKernel;
 using VirtualDungeonMaster.Domain.Adventures;
 using VirtualDungeonMaster.Domain.AI;
+using VirtualDungeonMaster.Domain.Characters;
 
 namespace VirtualDungeonMaster.Infrastructure.AI
 {
     public class SemanticKernelAiService(Kernel kernel) : IAiService
     {
         private readonly Kernel _kernel = kernel;
-        private readonly KernelFunction _generateAdventureIntroFunction = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText("Prompts/GenerateAdventureIntroPrompt.txt"));
-        private readonly KernelFunction _generateTurnResponseFunction = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText("Prompts/GenerateTurnResponsePrompt.txt"));
-        private readonly KernelFunction _generateRecapFunction = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText("Prompts/GenerateRecapPrompt.txt"));
+        private readonly string _basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
 
-        public Task<string> GenerateAdventureIntroAsync(int characterId, CancellationToken cancellationToken = default)
+        public Task<string> GenerateAdventureIntroAsync(Character character, string? title, CancellationToken cancellationToken = default)
         {
             var arguments = new KernelArguments
             {
-                { "characterId", characterId }
+                { "adventureTitle", title ?? string.Empty },
+                { "characterName", character.Name },
+                { "characterRace", character.Race },
+                { "characterClass", character.Class },
+                { "characterBackground", character.Background },
             };
-
-            return _kernel.InvokeAsync(_generateAdventureIntroFunction, arguments, cancellationToken)
+            KernelFunction function = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText($"{_basePath}/AI/Prompts/DungeonMaster/GenerateAdventureIntroPrompt.txt"));
+            return _kernel.InvokeAsync(function, arguments, cancellationToken)
                 .ContinueWith(task => task.Result.ToString() ?? string.Empty, cancellationToken);
         }
 
@@ -28,7 +32,9 @@ namespace VirtualDungeonMaster.Infrastructure.AI
             {
                 { "sessionSummary", string.Join("\n", session.Events.Select(e => $"Player: {e.PlayerInput}\nDM: {e.AIResponse}")) }
             };
-            return _kernel.InvokeAsync(_generateRecapFunction, arguments, cancellationToken)
+            KernelFunction function = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText($"{_basePath}/AI/Prompts/DungeonMaster/GenerateRecapPrompt.txt"));
+
+            return _kernel.InvokeAsync(function, arguments, cancellationToken)
                 .ContinueWith(task => task.Result.ToString() ?? string.Empty, cancellationToken);
         }
 
@@ -39,7 +45,8 @@ namespace VirtualDungeonMaster.Infrastructure.AI
                 { "sessionSummary", string.Join("\n", session.Events.Select(e => $"Player: {e.PlayerInput}\nDM: {e.AIResponse}")) },
                 { "playerInput", playerInput }
             };
-            return _kernel.InvokeAsync(_generateTurnResponseFunction, arguments, cancellationToken)
+            KernelFunction function = KernelFunctionFactory.CreateFromPrompt(File.ReadAllText($"{_basePath}/AI/Prompts/DungeonMaster/GenerateTurnResponsePrompt.txt"));
+            return _kernel.InvokeAsync(function, arguments, cancellationToken)
                 .ContinueWith(task => task.Result.ToString() ?? string.Empty, cancellationToken);
         }
     }

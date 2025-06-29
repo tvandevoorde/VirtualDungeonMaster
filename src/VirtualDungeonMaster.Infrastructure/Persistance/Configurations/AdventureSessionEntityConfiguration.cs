@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VirtualDungeonMaster.Infrastructure.Entities.Adventures;
 
@@ -12,7 +12,7 @@ namespace VirtualDungeonMaster.Infrastructure.Persistance.Configurations
             builder.Property(e => e.Title).IsRequired().HasMaxLength(200);
             builder.Property(e => e.Status).IsRequired().HasMaxLength(50);
             builder.Property(e => e.StartedAt).IsRequired();
-            builder.Property(e => e.CurrentPrompt).HasMaxLength(1000);
+            builder.Property(e => e.CurrentPrompt).HasMaxLength(5000);
             builder.HasMany(e => e.Events).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }

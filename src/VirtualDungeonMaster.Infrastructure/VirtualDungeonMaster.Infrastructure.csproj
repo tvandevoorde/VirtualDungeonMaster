@@ -20,13 +20,27 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.58.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.58.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.58.0-alpha" />
-    <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.58.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.58.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Memory" Version="1.58.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.58.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel.PromptTemplates.Handlebars" Version="1.58.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\VirtualDungeonMaster.Domain\VirtualDungeonMaster.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AI\Prompts\**\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

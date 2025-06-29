@@ -1,6 +1,6 @@
 ﻿using VirtualDungeonMaster.Domain.Adventures.Narratives;
 
-namespace VirtualDungeonMaster.Domain.Adventures
+namespace VirtualDungeonMaster.Domain.Adventures.Services
 {
     public interface IAdventureService
     {

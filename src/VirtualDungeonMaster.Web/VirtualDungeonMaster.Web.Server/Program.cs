@@ -1,3 +1,5 @@
+﻿using Scalar.AspNetCore;
+using VirtualDungeonMaster.Application.Extensions;
 
 namespace VirtualDungeonMaster.Web.Server
 {
@@ -5,29 +7,34 @@ namespace VirtualDungeonMaster.Web.Server
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddOpenApi();
 
-            var app = builder.Build();
+            builder.Services.AddVirtualDungeonMasterApp(builder.Configuration);
+
+            WebApplication app = builder.Build();
 
             app.UseDefaultFiles();
             app.MapStaticAssets();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
+            if (app.Environment.IsDevelopment())
+            {
+                app.MapOpenApi();
+                app.MapScalarApiReference(opt =>
+                {
+                    opt.Title = "Virtual Dungeon Master";
+                    opt.Theme = ScalarTheme.BluePlanet;
+                    opt.DefaultHttpClient = new(ScalarTarget.Http, ScalarClient.Http1);
+                });
+            }
 
             app.MapControllers();
 

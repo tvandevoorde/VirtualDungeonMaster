@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using VirtualDungeonMaster.Domain.Adventures;
 using VirtualDungeonMaster.Domain.Adventures.Narratives;
 using VirtualDungeonMaster.Domain.Characters;
@@ -16,7 +16,8 @@ namespace VirtualDungeonMaster.Infrastructure.Mapping
             CreateMap<NarrativeEventEntity, NarrativeEvent>()
                 .ConstructUsing(e => new NarrativeEvent(e.TurnNumber, e.PlayerInput, e.AIResponse))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => src.Timestamp));
+                .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => src.Timestamp))
+                .ReverseMap();
             CreateMap<AdventureSessionEntity, AdventureSession>()
                 .ConstructUsing(e => new AdventureSession(e.CharacterId, e.Title))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -25,7 +26,8 @@ namespace VirtualDungeonMaster.Infrastructure.Mapping
                 .ForMember(dest => dest.EndedAt, opt => opt.MapFrom(src => src.EndedAt))
                 .ForMember(dest => dest.Events, opt => opt.MapFrom(src => src.Events))
                 .ForMember(dest => dest.CurrentTurnNumber, opt => opt.MapFrom(src => src.CurrentTurnNumber))
-                .ForMember(dest => dest.CurrentPrompt, opt => opt.MapFrom(src => src.CurrentPrompt));
+                .ForMember(dest => dest.CurrentPrompt, opt => opt.MapFrom(src => src.CurrentPrompt))
+                .ReverseMap();
         }
     }
 }
