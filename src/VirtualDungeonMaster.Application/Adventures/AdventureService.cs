@@ -58,7 +58,7 @@ namespace VirtualDungeonMaster.Application.Adventures
             return session.GetLastEvent()!;
         }
 
-        public async Task EndSessionAsync(int sessionId, string reason = "completed", CancellationToken cancellationToken = default)
+        public async Task EndSessionAsync(int sessionId, CancellationToken cancellationToken = default)
         {
             AdventureSession session = await _adventuresRepository.GetAdventureSessionById(sessionId, cancellationToken)
                 ?? throw new EntityNotFoundException(nameof(AdventureSessionEntity), sessionId);

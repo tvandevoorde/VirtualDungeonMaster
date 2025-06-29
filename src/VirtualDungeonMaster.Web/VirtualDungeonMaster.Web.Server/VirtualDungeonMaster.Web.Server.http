@@ -24,10 +24,7 @@ Content-Type: application/json
 ### End an adventure session
 POST {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/session/1/end
 Content-Type: application/json
-
-{
-  "reason": "completed"
-}
+{}
 
 ### List all sessions for a character
 GET {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/character/1/sessions
