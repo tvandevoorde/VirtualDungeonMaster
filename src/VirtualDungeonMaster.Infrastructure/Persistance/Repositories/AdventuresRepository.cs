@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VirtualDungeonMaster.Domain.Adventures;
 using VirtualDungeonMaster.Domain.Adventures.Repositories;
 using VirtualDungeonMaster.Infrastructure.Entities.Adventures;
+using VirtualDungeonMaster.Infrastructure.Entities.Narratives;
 
 namespace VirtualDungeonMaster.Infrastructure.Persistance.Repositories
 {
@@ -38,20 +39,23 @@ namespace VirtualDungeonMaster.Infrastructure.Persistance.Repositories
 
         public async Task<AdventureSession> SaveAsync(AdventureSession session, CancellationToken cancellationToken = default)
         {
-            AdventureSessionEntity? entity = await _dbContext.AdventureSessions
-                .Include(x => x.Events)
-                .FirstOrDefaultAsync(x => x.Id == session.Id, cancellationToken);
-            if (entity == null)
+            AdventureSessionEntity entity = _mapper.Map<AdventureSessionEntity>(session);
+
+            _dbContext.Attach(entity);
+            _dbContext.Entry(entity).State = EntityState.Modified;
+
+            foreach (NarrativeEventEntity evt in entity.Events.Where(x => x.Id > 0))
             {
-                entity = _mapper.Map<AdventureSessionEntity>(session);
-                await _dbContext.AdventureSessions.AddAsync(entity, cancellationToken);
+                _dbContext.Entry(evt).State = EntityState.Modified;
             }
-            else
+
+            foreach (NarrativeEventEntity evt in entity.Events.Where(x => x.Id == 0))
             {
-                _mapper.Map(session, entity);
-                _dbContext.AdventureSessions.Update(entity);
+                _dbContext.Entry(evt).State = EntityState.Added;
             }
+
             await _dbContext.SaveChangesAsync(cancellationToken);
+
             return _mapper.Map<AdventureSession>(entity);
         }
     }

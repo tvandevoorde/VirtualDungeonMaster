@@ -53,7 +53,7 @@ namespace VirtualDungeonMaster.Application.Adventures
             var response = await _aiService.GenerateTurnResponseAsync(session, playerInput, cancellationToken);
             session.AddNarrativeEvent(playerInput, response);
 
-            await _adventuresRepository.SaveAsync(session, cancellationToken);
+            session = await _adventuresRepository.SaveAsync(session, cancellationToken);
 
             return session.GetLastEvent()!;
         }

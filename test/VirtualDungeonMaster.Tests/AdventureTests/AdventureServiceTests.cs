@@ -21,13 +21,13 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             charactersRepo.GetCharacterById(1, Arg.Any<CancellationToken>()).Returns(character);
             aiService.GenerateAdventureIntroAsync(character, "Epic Quest", Arg.Any<CancellationToken>()).Returns("Welcome!");
             AdventureSession? savedSession = null;
-            adventuresRepo.SaveAsync(Arg.Do<AdventureSession>(s => savedSession = s), Arg.Any<CancellationToken>()).Returns(call => call.Arg<AdventureSession>());
+            adventuresRepo.SaveAsync(Arg.Do<AdventureSession>(s => savedSession = s), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
-            AdventureSession session = await service.StartNewSessionAsync(1, "Epic Quest");
+            AdventureSession session = await service.StartNewSessionAsync(character.Id, "Epic Quest");
 
             Assert.NotNull(session);
-            Assert.Equal(1, session.CharacterId);
+            Assert.Equal(character.Id, session.CharacterId);
             Assert.Equal("Epic Quest", session.Title);
             Assert.Single(session.Events);
             Assert.Equal("Welcome!", session.Events[0].AIResponse);
@@ -82,7 +82,7 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             var session = new AdventureSession(1, "Test");
             adventuresRepo.GetAdventureSessionById(3, Arg.Any<CancellationToken>()).Returns(session);
             aiService.GenerateTurnResponseAsync(session, "go north", Arg.Any<CancellationToken>()).Returns("You go north.");
-            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(session);
+            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
             Domain.Adventures.Narratives.NarrativeEvent result = await service.SubmitTurnAsync(3, "go north");
@@ -127,7 +127,7 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             ICharactersRepository charactersRepo = Substitute.For<ICharactersRepository>();
             var session = new AdventureSession(1, "Test");
             adventuresRepo.GetAdventureSessionById(4, Arg.Any<CancellationToken>()).Returns(session);
-            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(session);
+            adventuresRepo.SaveAsync(session, Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 
             await service.EndSessionAsync(4, "completed");

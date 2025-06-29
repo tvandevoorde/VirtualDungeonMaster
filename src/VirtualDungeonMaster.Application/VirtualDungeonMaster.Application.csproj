@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\VirtualDungeonMaster.Domain\VirtualDungeonMaster.Domain.csproj" />
     <ProjectReference Include="..\VirtualDungeonMaster.Infrastructure\VirtualDungeonMaster.Infrastructure.csproj" />
   </ItemGroup>
