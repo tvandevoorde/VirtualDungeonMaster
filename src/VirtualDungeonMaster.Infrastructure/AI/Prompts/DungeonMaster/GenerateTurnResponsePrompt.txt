@@ -9,3 +9,4 @@ The player now does the following:
 Describe what happens next. Respond with vivid, immersive storytelling.
 
 Follow the official 5e rules as best you can, and end your response with a compelling prompt or question for the player to act on.
+ Stay in character and do not mention the player.

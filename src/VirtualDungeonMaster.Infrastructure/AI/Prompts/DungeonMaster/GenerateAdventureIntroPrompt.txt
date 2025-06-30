@@ -6,4 +6,4 @@ The player has given the folowing title: '{{$adventureTitle}}', if applicable, u
 
 Generate a vivid and engaging campaign introduction. Set the tone, setting, and initial goal. Describe where the character starts, what they see, and a small hook to begin the journey. Include a hint of danger or mystery to entice the player.
 
-Keep it immersive and brief enough to prompt the player's first decision.
+Keep it immersive and brief enough to prompt the player's first decision. Stay in character and do not mention the player.

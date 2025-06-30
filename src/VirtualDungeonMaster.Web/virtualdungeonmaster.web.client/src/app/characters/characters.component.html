@@ -1,0 +1,63 @@
+<div class="characters-page">
+  <div class="page-header">
+    <h2>⚔️ Characters ⚔️</h2>
+    <button
+      class="btn btn-primary"
+      (click)="showCreateForm()"
+      [disabled]="loading">
+      <span class="btn-icon">✨</span>
+      Create New Character
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <app-error-message
+    [message]="error"
+    [dismissible]="true"
+    (dismiss)="clearError()">
+  </app-error-message>
+
+  <!-- Loading Indicator -->
+  <app-loading
+    *ngIf="loading && !showForm"
+    message="Loading characters..."
+    size="medium">
+  </app-loading>
+
+  <!-- Character Form -->
+  <div *ngIf="showForm" class="form-container">
+    <app-character-form
+      [character]="editingCharacter"
+      [isEditing]="!!editingCharacter"
+      [loading]="loading"
+      (save)="onSaveCharacter($event)"
+      (cancel)="onCancelForm()">
+    </app-character-form>
+  </div>
+
+  <!-- Characters List -->
+  <div *ngIf="!showForm && characters.length > 0" class="characters-grid">
+    <app-character-card
+      *ngFor="let character of characters"
+      [character]="character"
+      [showActions]="true"
+      [showBackground]="true"
+      [loading]="loading"
+      (characterEdit)="editCharacter($event)"
+      (characterDelete)="deleteCharacter($event)">
+    </app-character-card>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!showForm && !loading && characters.length === 0" class="empty-state">
+    <div class="empty-icon">🏰</div>
+    <h3>No Characters Found</h3>
+    <p>Create your first character to begin your adventure!</p>
+    <button
+      class="btn btn-primary"
+      (click)="showCreateForm()">
+      <span class="btn-icon">✨</span>
+      Create Your First Character
+    </button>
+  </div>
+</div>

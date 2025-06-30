@@ -42,16 +42,11 @@ namespace VirtualDungeonMaster.Infrastructure.Persistance.Repositories
             AdventureSessionEntity entity = _mapper.Map<AdventureSessionEntity>(session);
 
             _dbContext.Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Entry(entity).State = entity.Id == 0 ? EntityState.Added : EntityState.Modified;
 
-            foreach (NarrativeEventEntity evt in entity.Events.Where(x => x.Id > 0))
+            foreach (NarrativeEventEntity evt in entity.Events)
             {
-                _dbContext.Entry(evt).State = EntityState.Modified;
-            }
-
-            foreach (NarrativeEventEntity evt in entity.Events.Where(x => x.Id == 0))
-            {
-                _dbContext.Entry(evt).State = EntityState.Added;
+                _dbContext.Entry(evt).State = evt.Id == 0 ? EntityState.Added : EntityState.Modified;
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
