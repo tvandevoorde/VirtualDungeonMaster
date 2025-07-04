@@ -14,7 +14,7 @@ namespace VirtualDungeonMaster.Web.Server.Mapping
             CreateMap<NarrativeEvent, NarrativeEventDto>().ReverseMap();
             CreateMap<AdventureSession, AdventureSessionDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-                .ForMember(dest => dest.AdventureSummary, opt => opt.Ignore())
+                .ForMember(dest => dest.AdventureSummary, opt => opt.MapFrom(src => src.AdventureSummary))
                 .ReverseMap();
             CreateMap<AdventureSession, AdventureSessionSummaryDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
