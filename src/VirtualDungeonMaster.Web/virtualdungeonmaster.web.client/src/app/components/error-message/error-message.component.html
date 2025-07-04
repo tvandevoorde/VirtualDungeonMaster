@@ -1,0 +1,11 @@
+<div class="error" *ngIf="message">
+  <span class="error-icon">⚠️</span>
+  <span class="error-text">{{ message }}</span>
+  <button
+    *ngIf="dismissible"
+    class="error-dismiss"
+    (click)="onDismiss()"
+    aria-label="Dismiss error">
+    ✕
+  </button>
+</div>

@@ -1,0 +1,89 @@
+/* D&D themed layout styles */
+.dnd-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #2d1e13 url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+  color: #f5e6c8;
+}
+
+.dnd-header {
+  background: #4b2e05;
+  color: #ffd700;
+  padding: 1.5rem 2rem 1rem 2rem;
+  border-bottom: 4px solid #a67c52;
+  text-align: left;
+  box-shadow: 0 2px 8px #0008;
+}
+
+  .dnd-header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+  }
+
+.dnd-main {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.dnd-sidebar {
+  width: 220px;
+  background: #3a2412;
+  border-right: 3px solid #a67c52;
+  padding: 2rem 1rem 2rem 1rem;
+  min-height: 100%;
+}
+
+  .dnd-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dnd-sidebar li {
+    margin-bottom: 1.5rem;
+  }
+
+  .dnd-sidebar a {
+    color: #ffd700;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+
+    .dnd-sidebar a.active,
+    .dnd-sidebar a:hover {
+      color: #fffbe6;
+      text-shadow: 0 0 8px #ffd70099;
+    }
+
+.dnd-content {
+  flex: 1 1 auto;
+  padding: 2rem 2.5rem;
+  min-width: 0;
+  background: rgba(45, 30, 19, 0.95);
+  border-radius: 0 0.5rem 0.5rem 0;
+  box-shadow: 0 0 16px #0006;
+}
+
+@media (max-width: 800px) {
+  .dnd-main {
+    flex-direction: column;
+  }
+
+  .dnd-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 3px solid #a67c52;
+    min-height: unset;
+    padding: 1rem;
+  }
+
+  .dnd-content {
+    border-radius: 0 0 0.5rem 0.5rem;
+    padding: 1rem;
+  }
+}

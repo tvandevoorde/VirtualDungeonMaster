@@ -1,0 +1,16 @@
+<div class="dnd-layout">
+  <header class="dnd-header">
+    <h1>🧙 Virtual Dungeon Master</h1>
+  </header>
+  <div class="dnd-main">
+    <nav class="dnd-sidebar">
+      <ul>
+        <li><a routerLink="/adventures" routerLinkActive="active">Adventures</a></li>
+        <li><a routerLink="/characters" routerLinkActive="active">Characters</a></li>
+      </ul>
+    </nav>
+    <section class="dnd-content">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+</div>

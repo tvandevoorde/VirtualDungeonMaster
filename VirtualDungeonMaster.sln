@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "virtualdungeonmaster.web.client", "src\VirtualDungeonMaster.Web\virtualdungeonmaster.web.client\virtualdungeonmaster.web.client.esproj", "{895E996C-D68B-E587-8D96-8CEB6A2036C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualDungeonMaster.Web.Server", "src\VirtualDungeonMaster.Web\VirtualDungeonMaster.Web.Server\VirtualDungeonMaster.Web.Server.csproj", "{747B2B7E-CE4A-413E-8C56-7982EA6951FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualDungeonMaster.Domain", "src\VirtualDungeonMaster.Domain\VirtualDungeonMaster.Domain.csproj", "{A543F883-0BA9-4D15-BB9F-9B6E48443ECA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualDungeonMaster.Application", "src\VirtualDungeonMaster.Application\VirtualDungeonMaster.Application.csproj", "{59725E92-535B-4604-A36D-87083A3A641A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualDungeonMaster.Infrastructure", "src\VirtualDungeonMaster.Infrastructure\VirtualDungeonMaster.Infrastructure.csproj", "{588C871F-ADF1-4D83-87B1-D5E66CFF3DB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualDungeonMaster.Tests", "test\VirtualDungeonMaster.Tests\VirtualDungeonMaster.Tests.csproj", "{3AC66C44-2B0F-4E36-B1F4-57AF5FF4593D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{895E996C-D68B-E587-8D96-8CEB6A2036C4}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{747B2B7E-CE4A-413E-8C56-7982EA6951FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{747B2B7E-CE4A-413E-8C56-7982EA6951FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{747B2B7E-CE4A-413E-8C56-7982EA6951FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{747B2B7E-CE4A-413E-8C56-7982EA6951FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A543F883-0BA9-4D15-BB9F-9B6E48443ECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A543F883-0BA9-4D15-BB9F-9B6E48443ECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A543F883-0BA9-4D15-BB9F-9B6E48443ECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A543F883-0BA9-4D15-BB9F-9B6E48443ECA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59725E92-535B-4604-A36D-87083A3A641A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59725E92-535B-4604-A36D-87083A3A641A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59725E92-535B-4604-A36D-87083A3A641A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59725E92-535B-4604-A36D-87083A3A641A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{588C871F-ADF1-4D83-87B1-D5E66CFF3DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{588C871F-ADF1-4D83-87B1-D5E66CFF3DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{588C871F-ADF1-4D83-87B1-D5E66CFF3DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{588C871F-ADF1-4D83-87B1-D5E66CFF3DB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AC66C44-2B0F-4E36-B1F4-57AF5FF4593D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AC66C44-2B0F-4E36-B1F4-57AF5FF4593D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AC66C44-2B0F-4E36-B1F4-57AF5FF4593D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AC66C44-2B0F-4E36-B1F4-57AF5FF4593D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2A14BC8-8502-452F-8979-E1D4E003F3EE}
+	EndGlobalSection
+EndGlobal

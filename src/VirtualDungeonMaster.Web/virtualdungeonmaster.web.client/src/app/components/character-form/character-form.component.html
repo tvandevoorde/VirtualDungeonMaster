@@ -1,0 +1,125 @@
+<div class="character-form-container">
+  <div class="character-form-header">
+    <h3>{{ isEditing ? 'Edit Character' : 'Create New Character' }}</h3>
+    <div class="header-decoration">⚔️ 🛡️ ⚔️</div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="character-form" novalidate>
+    <!-- Character Name -->
+    <div class="form-group">
+      <label for="characterName" class="form-label">
+        <span class="label-icon">📜</span>
+        Character Name
+      </label>
+      <input
+        id="characterName"
+        type="text"
+        [(ngModel)]="form.name"
+        name="name"
+        class="form-input"
+        placeholder="Enter your character's name"
+        required
+        [disabled]="loading">
+    </div>
+
+    <!-- Character Class Selection -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">⚔️</span>
+        Character Class
+      </label>
+      <div class="selection-grid">
+        <div
+          *ngFor="let charClass of characterClasses"
+          class="selection-card"
+          [class.selected]="form.class === charClass.id"
+          (click)="form.class = charClass.id"
+          [attr.tabindex]="loading ? -1 : 0"
+          (keydown.enter)="form.class = charClass.id"
+          (keydown.space)="form.class = charClass.id">
+          <div class="card-icon">{{ charClass.icon }}</div>
+          <div class="card-name">{{ charClass.name }}</div>
+          <div class="card-description">{{ charClass.description }}</div>
+        </div>
+      </div>
+      <div *ngIf="form.class" class="selected-info">
+        <strong>Selected:</strong> {{ getCharacterClass(form.class)?.name }}
+        <span class="selected-icon">{{ getCharacterClass(form.class)?.icon }}</span>
+      </div>
+    </div>
+
+    <!-- Race Selection -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">🌍</span>
+        Race
+      </label>
+      <div class="selection-grid">
+        <div
+          *ngFor="let race of races"
+          class="selection-card race-card"
+          [class.selected]="form.race === race.id"
+          (click)="form.race = race.id"
+          [attr.tabindex]="loading ? -1 : 0"
+          (keydown.enter)="form.race = race.id"
+          (keydown.space)="form.race = race.id">
+          <div class="card-icon">{{ race.icon }}</div>
+          <div class="card-name">{{ race.name }}</div>
+          <div class="card-description">{{ race.description }}</div>
+          <div class="race-traits">
+            <span *ngFor="let trait of race.traits" class="trait-tag">{{ trait }}</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="form.race" class="selected-info">
+        <strong>Selected:</strong> {{ getRace(form.race)?.name }}
+        <span class="selected-icon">{{ getRace(form.race)?.icon }}</span>
+      </div>
+    </div>
+
+    <!-- Background Story -->
+    <div class="form-group">
+      <label for="background" class="form-label">
+        <span class="label-icon">📖</span>
+        Background Story
+        <span class="optional">(Optional)</span>
+      </label>
+      <textarea
+        id="background"
+        [(ngModel)]="form.background"
+        name="background"
+        class="form-textarea"
+        rows="6"
+        [placeholder]="getBackgroundPlaceholder()"
+        [disabled]="loading"></textarea>
+      <div class="textarea-hint">
+        Describe your character's past, motivations, and what drives them to adventure.
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancel()"
+        [disabled]="loading">
+        <span class="btn-icon">❌</span>
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!isFormValid() || loading">
+        <span class="btn-icon">{{ isEditing ? '💾' : '✨' }}</span>
+        {{ isEditing ? 'Update Character' : 'Create Character' }}
+      </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="loading" class="loading-overlay">
+      <div class="loading-spinner">⚡</div>
+      <div class="loading-text">{{ isEditing ? 'Updating...' : 'Creating...' }}</div>
+    </div>
+  </form>
+</div>

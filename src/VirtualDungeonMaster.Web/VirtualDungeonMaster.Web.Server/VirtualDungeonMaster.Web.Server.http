@@ -1,0 +1,47 @@
+@VirtualDungeonMaster.Web.Server_HostAddress = http://localhost:5280
+
+### Start a new adventure session
+POST {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/session
+Content-Type: application/json
+
+{
+  "characterId": 1,
+  "title": "My Adventure Title"
+}
+
+### Get an adventure session by ID
+GET {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/session/1
+Accept: application/json
+
+### Submit a turn to an adventure session
+POST {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/session/1/turn
+Content-Type: application/json
+
+{
+  "playerInput": "Go north"
+}
+
+### End an adventure session
+POST {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/session/1/end
+Content-Type: application/json
+{}
+
+### List all sessions for a character
+GET {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/adventures/character/1/sessions
+Accept: application/json
+
+### List all characters
+GET {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/characters
+Accept: application/json
+
+### Get a character by ID
+GET {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/characters/1
+Accept: application/json
+
+### Create a new character
+POST {{VirtualDungeonMaster.Web.Server_HostAddress}}/api/characters
+Content-Type: application/json
+
+{
+  "name": "Aragorn",
+  "class": "

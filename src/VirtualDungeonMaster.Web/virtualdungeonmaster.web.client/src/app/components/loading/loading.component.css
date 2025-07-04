@@ -1,0 +1,43 @@
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.loading-small {
+  padding: 20px;
+  font-size: 14px;
+}
+
+.loading-medium {
+  padding: 40px;
+  font-size: 18px;
+}
+
+.loading-large {
+  padding: 60px;
+  font-size: 24px;
+}
+
+.loading-spinner {
+  margin-right: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-small .loading-spinner {
+  font-size: 20px;
+}
+
+.loading-medium .loading-spinner {
+  font-size: 32px;
+}
+
+.loading-large .loading-spinner {
+  font-size: 48px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
