@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AdventuresComponent } from './adventures.component';
 import { CharacterService } from '../services/character.service';
 import { AdventureService } from '../services/adventure.service';
-import { AdventureSession, AdventureStatus } from '../models/adventure.model';
+import { AdventureSession, AdventureSessionSummary, AdventureStatus } from '../models/adventure.model';
 import { CharacterCardComponent } from '../components/character-card/character-card.component';
 import { LoadingComponent } from '../components/loading/loading.component';
 import { ErrorMessageComponent } from '../components/error-message/error-message.component';
@@ -33,11 +33,19 @@ describe('AdventuresComponent', () => {
     id: 1,
     characterId: 1,
     title: 'Test Adventure',
-    status: AdventureStatus.Active,
+    status: 'Active',
     currentTurnNumber: 1,
     currentPrompt: 'Test prompt',
-    startedAt: '2023-01-01T10:00:00Z',
-    events: []
+    startedAt: '2023-01-01T10:00:00Z'
+  };
+
+  const mockAdventureSummary: AdventureSessionSummary = {
+    id: 1,
+    characterId: 1,
+    title: 'Test Adventure',
+    status: 'Active',
+    currentTurnNumber: 1,
+    startedAt: '2023-01-01T10:00:00Z'
   };
 
   beforeEach(async () => {
@@ -45,6 +53,7 @@ describe('AdventuresComponent', () => {
     const adventureSpy = jasmine.createSpyObj('AdventureService', [
       'getCharacterSessions',
       'getSession',
+      'getSessionEvents',
       'startSession',
       'submitTurn',
       'endSession'
@@ -84,8 +93,9 @@ describe('AdventuresComponent', () => {
     // Setup default mock returns
     mockCharacterService.getCharacters.and.returnValue(of([mockCharacter]));
     mockCharacterService.getCharacter.and.returnValue(of(mockCharacter));
-    mockAdventureService.getCharacterSessions.and.returnValue(of([mockAdventure]));
+    mockAdventureService.getCharacterSessions.and.returnValue(of([mockAdventureSummary]));
     mockAdventureService.getSession.and.returnValue(of(mockAdventure));
+    mockAdventureService.getSessionEvents.and.returnValue(of([]));
     mockAdventureService.startSession.and.returnValue(of(mockAdventure));
     mockAdventureService.submitTurn.and.returnValue(of({
       id: 1,

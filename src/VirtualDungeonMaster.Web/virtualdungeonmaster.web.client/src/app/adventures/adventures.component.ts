@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Character } from '../models/character.model';
 import { CharacterService } from '../services/character.service';
 import { AdventureService } from '../services/adventure.service';
-import { AdventureSession, NarrativeEvent, AdventureStatus } from '../models/adventure.model';
+import { AdventureSession, AdventureSessionSummary, NarrativeEvent, AdventureStatus } from '../models/adventure.model';
 
 @Component({
   selector: 'app-adventures',
@@ -16,12 +16,20 @@ export class AdventuresComponent implements OnInit {
 
   characters: Character[] = [];
   selectedCharacter: Character | null = null;
-  adventures: AdventureSession[] = [];
+  adventures: AdventureSessionSummary[] = [];
   currentAdventure: AdventureSession | null = null;
+  events: NarrativeEvent[] = [];
   loading = false;
+  loadingEvents = false;
   error = '';
   creating = false;
   newAdventureTitle = '';
+
+  // Pagination for events
+  eventSkip = 0;
+  eventTake = 20;
+  hasMoreEvents = true;
+  isLoadingMore = false;
 
   // Turn submission
   playerInput = '';
@@ -66,7 +74,7 @@ export class AdventuresComponent implements OnInit {
   loadAdventures(characterId: number) {
     this.loading = true;
     this.adventureService.getCharacterSessions(characterId).subscribe({
-      next: (data: AdventureSession[]) => {
+      next: (data: AdventureSessionSummary[]) => {
         this.adventures = data;
         this.loading = false;
       },
@@ -99,12 +107,17 @@ export class AdventuresComponent implements OnInit {
     });
   }
 
-  goToAdventure(adventure: AdventureSession) {
+  goToAdventure(adventure: AdventureSessionSummary) {
     this.router.navigate(['/adventures', adventure.id]);
   }
 
   loadAdventureSession(sessionId: number) {
     this.loading = true;
+    this.currentAdventure = null;
+    this.events = [];
+    this.eventSkip = 0;
+    this.hasMoreEvents = true;
+
     this.adventureService.getSession(sessionId).subscribe({
       next: (session: AdventureSession) => {
         this.currentAdventure = session;
@@ -114,8 +127,8 @@ export class AdventuresComponent implements OnInit {
             this.selectedCharacter = character;
             this.loading = false;
 
-            // Scroll to latest turn after the view is initialized
-            this.scrollToLatestTurn();
+            // Load initial events
+            this.loadEvents(sessionId);
           },
           error: () => {
             this.error = 'Failed to load character details.';
@@ -130,6 +143,44 @@ export class AdventuresComponent implements OnInit {
     });
   }
 
+  loadEvents(sessionId: number, loadMore: boolean = false) {
+    if (this.isLoadingMore || !this.hasMoreEvents && loadMore) return;
+
+    if (loadMore) {
+      this.isLoadingMore = true;
+    } else {
+      this.loadingEvents = true;
+    }
+
+    this.adventureService.getSessionEvents(sessionId, this.eventSkip, this.eventTake).subscribe({
+      next: (events: NarrativeEvent[]) => {
+        if (events.length < this.eventTake) {
+          this.hasMoreEvents = false;
+        }
+
+        if (loadMore) {
+          // When loading more (older events), add them to the bottom
+          // Backend returns descending order, so older events go at the end
+          this.events.push(...events);
+        } else {
+          // When loading initial events, keep backend order (newest first, descending turn order)
+          this.events = events;
+        }
+
+        this.eventSkip += events.length;
+        this.loadingEvents = false;
+        this.isLoadingMore = false;
+
+        // Note: Removed automatic scroll to latest turn to let user control scroll position
+      },
+      error: () => {
+        this.error = 'Failed to load adventure events.';
+        this.loadingEvents = false;
+        this.isLoadingMore = false;
+      }
+    });
+  }
+
   submitTurn() {
     if (!this.currentAdventure || !this.currentAdventure.id || !this.playerInput.trim()) return;
 
@@ -138,14 +189,13 @@ export class AdventuresComponent implements OnInit {
       playerInput: this.playerInput.trim()
     }).subscribe({
       next: (narrativeEvent: NarrativeEvent) => {
-        // Add the new event to the current adventure
-        this.currentAdventure!.events.push(narrativeEvent);
+        // Add the new event to the top of the events array
+        this.events.unshift(narrativeEvent);
         this.currentAdventure!.currentTurnNumber = narrativeEvent.turnNumber;
         this.playerInput = '';
         this.submittingTurn = false;
 
-        // Scroll to show the latest turn at the top
-        this.scrollToLatestTurn();
+        // Note: Removed automatic scroll to let user control scroll position
       },
       error: () => {
         this.error = 'Failed to submit turn.';
@@ -160,7 +210,7 @@ export class AdventuresComponent implements OnInit {
     this.loading = true;
     this.adventureService.endSession(this.currentAdventure.id).subscribe({
       next: () => {
-        this.currentAdventure!.status = AdventureStatus.Completed;
+        this.currentAdventure!.status = 'Completed';
         this.loading = false;
       },
       error: () => {
@@ -176,36 +226,7 @@ export class AdventuresComponent implements OnInit {
   }
 
   isAdventureActive(): boolean {
-    return this.currentAdventure?.status === AdventureStatus.Active;
-  }
-
-  /**
-   * Scroll the adventure log so the latest turn appears at the top
-   */
-  private scrollToLatestTurn() {
-    // Use setTimeout to ensure DOM has updated after the new event is added
-    setTimeout(() => {
-      if (this.adventureLog && this.adventureLog.nativeElement) {
-        const logElement = this.adventureLog.nativeElement;
-
-        // Try to find the last event group (most recent turn)
-        const lastEventGroup = logElement.querySelector('.event-group:last-child');
-
-        if (lastEventGroup) {
-          // Scroll so the last event group appears at the top of the visible area
-          lastEventGroup.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        } else {
-          // If no event groups yet, just scroll to the bottom to show the latest content
-          logElement.scrollTo({
-            top: logElement.scrollHeight,
-            behavior: 'smooth'
-          });
-        }
-      }
-    }, 200); // Increased timeout to ensure DOM is fully updated
+    return this.currentAdventure?.status === 'Active';
   }
 
   /**
@@ -213,5 +234,25 @@ export class AdventuresComponent implements OnInit {
    */
   clearError(): void {
     this.error = '';
+  }
+
+  @HostListener('scroll', ['$event'])
+  onScroll(event: any) {
+    // This is for global scroll events if needed
+  }
+
+  onAdventureLogScroll(event: any) {
+    // Check if we're scrolling in the adventure log
+    if (!this.currentAdventure) return;
+
+    const element = event.target;
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+
+    // Load more events when scrolling near the bottom (for older events)
+    if (scrollTop + clientHeight >= scrollHeight - 100 && this.hasMoreEvents && !this.isLoadingMore) {
+      this.loadEvents(this.currentAdventure.id!, true);
+    }
   }
 }

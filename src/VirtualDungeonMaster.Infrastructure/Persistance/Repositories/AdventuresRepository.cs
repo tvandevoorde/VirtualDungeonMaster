@@ -31,7 +31,6 @@ namespace VirtualDungeonMaster.Infrastructure.Persistance.Repositories
         {
             List<AdventureSessionEntity> entities = await _dbContext.AdventureSessions
                 .AsNoTracking()
-                .Include(x => x.Events)
                 .Where(x => x.CharacterId == characterId)
                 .ToListAsync(cancellationToken);
             return _mapper.Map<List<AdventureSession>>(entities);

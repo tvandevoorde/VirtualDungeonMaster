@@ -20,7 +20,7 @@ namespace VirtualDungeonMaster.Tests.AdventureTests
             var character = new Character { Id = 1, Name = "Hero" };
             charactersRepo.GetCharacterById(1, Arg.Any<CancellationToken>()).Returns(character);
             aiService.GenerateAdventureIntroAsync(character, "Epic Quest", Arg.Any<CancellationToken>()).Returns("Welcome!");
-            AdventureSession? savedSession = null;
+            AdventureSession? savedSession = new AdventureSession(1, "Test");
             adventuresRepo.SaveAsync(Arg.Do<AdventureSession>(s => savedSession = s), Arg.Any<CancellationToken>()).Returns(callInfo => savedSession);
             var service = new AdventureService(aiService, adventuresRepo, charactersRepo);
 

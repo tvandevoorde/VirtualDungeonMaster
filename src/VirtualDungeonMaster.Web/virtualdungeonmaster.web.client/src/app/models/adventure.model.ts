@@ -2,12 +2,22 @@ export interface AdventureSession {
   id?: number;
   characterId: number;
   title: string;
-  status: AdventureStatus;
+  status: string; // 'Active' | 'Completed'
   startedAt: string;
   endedAt?: string;
-  events: NarrativeEvent[];
   currentTurnNumber: number;
   currentPrompt: string;
+  adventureSummary: string;
+}
+
+export interface AdventureSessionSummary {
+  id?: number;
+  characterId: number;
+  title: string;
+  status: string; // 'Active' | 'Completed'
+  startedAt: string;
+  endedAt?: string;
+  currentTurnNumber: number;
 }
 
 export interface NarrativeEvent {
@@ -27,8 +37,8 @@ export interface SubmitTurnRequest {
   playerInput: string;
 }
 
+// Keep enum for backwards compatibility but use string values
 export enum AdventureStatus {
-  Active = 0,
-  Completed = 1,
-  Paused = 2
+  Active = 'Active',
+  Completed = 'Completed'
 }

@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: 'Georgia', 'Times New Roman', Times, serif;
   background: #2d1e13 url('https://www.transparenttextures.com/patterns/wood-pattern.png');
   color: #f5e6c8;
 }
@@ -21,7 +20,6 @@
     margin: 0;
     font-size: 2.2rem;
     letter-spacing: 2px;
-    font-family: 'Cinzel', 'Georgia', serif;
   }
 
 .dnd-main {

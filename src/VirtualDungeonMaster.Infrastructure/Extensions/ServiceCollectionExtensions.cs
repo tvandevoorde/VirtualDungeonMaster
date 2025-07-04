@@ -25,6 +25,13 @@ namespace VirtualDungeonMaster.Infrastructure.Extensions
 
             // Register AutoMapper with all profiles in this assembly
             services.AddAutoMapper(typeof(EntityToDomainProfile).Assembly);
+            // Register AutoMapper with all profiles in the Web.Server assembly (for DTO mapping)
+            System.Reflection.Assembly? webServerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "VirtualDungeonMaster.Web.Server");
+            if (webServerAssembly != null)
+            {
+                services.AddAutoMapper(webServerAssembly);
+            }
 
             // Get Ollama modelId and endpoint from configuration (with defaults)
             var modelId = configuration["Ollama:ModelId"] ?? "llama3";

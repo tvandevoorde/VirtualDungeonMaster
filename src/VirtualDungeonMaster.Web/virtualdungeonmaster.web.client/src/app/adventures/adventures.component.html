@@ -28,19 +28,21 @@
   <!-- Adventure List View -->
   <div *ngIf="selectedCharacter && !currentAdventure" class="adventure-section">
     <div class="selected-character">
-      <div class="selected-character-header">
-        <h3>Selected Character</h3>
-        <button class="btn-back" (click)="selectedCharacter = null" title="Back to character selection">
-          ↩️ Back to Character Selection
-        </button>
+      <div class="character-header">
+        <h3>
+          <span class="character-icon">🧙‍♂️</span>
+          {{ selectedCharacter.name }}
+          <button class="btn-back" (click)="selectedCharacter = null" title="Back to character selection">
+            ↩️ Back
+          </button>
+        </h3>
       </div>
-      <div class="selected-character-card">
-        <app-character-card
-          [character]="selectedCharacter"
-          [selectable]="false"
-          [showActions]="false"
-          [showBackground]="true">
-        </app-character-card>
+      <div class="character-details">
+        <div class="character-info-grid">
+          <span class="character-class">🗡️ {{ selectedCharacter.class }}</span>
+          <span class="character-race">🧬 {{ selectedCharacter.race }}</span>
+          <span class="character-background">📜 {{ selectedCharacter.background }}</span>
+        </div>
       </div>
     </div>
 
@@ -82,7 +84,7 @@
         <div *ngFor="let adv of adventures" class="adventure-card" (click)="goToAdventure(adv)">
           <div class="adventure-title">{{ adv.title }}</div>
           <div class="adventure-meta">
-            <span class="adventure-status">{{ adv.status === 0 ? 'Active' : adv.status === 1 ? 'Completed' : 'Paused' }}</span>
+            <span class="adventure-status">{{ adv.status }}</span>
             <span class="adventure-turns">Turn {{ adv.currentTurnNumber }}</span>
           </div>
         </div>
@@ -100,22 +102,17 @@
   <div *ngIf="currentAdventure" class="adventure-session">
     <div class="session-header">
       <div class="session-info">
-        <h3>{{ currentAdventure.title }}</h3>
-        <div class="session-meta">
-          <span class="character-info">
-            <span class="character-icon">🧙‍♂️</span>
-            {{ selectedCharacter?.name }}
-          </span>
-          <span class="turn-info">Turn {{ currentAdventure.currentTurnNumber }}</span>
-          <span class="status-badge" [class]="'status-' + currentAdventure.status">
-            {{ currentAdventure.status === 0 ? 'Active' : currentAdventure.status === 1 ? 'Completed' : 'Paused' }}
-          </span>
+        <div class="title-with-back">
+          <h3>{{ currentAdventure.title }}</h3>
+          <button class="btn-back" (click)="backToAdventureList()" title="Back to adventures">
+            ↩️ Back
+          </button>
+        </div>
+        <div *ngIf="currentAdventure.adventureSummary" class="adventure-summary">
+          {{ currentAdventure.adventureSummary }}
         </div>
       </div>
       <div class="session-actions">
-        <button class="btn-back" (click)="backToAdventureList()" title="Back to adventures">
-          ↩️ Back
-        </button>
         <button
           *ngIf="isAdventureActive()"
           class="btn btn-danger"
@@ -129,9 +126,16 @@
     <!-- Adventure History -->
     <div class="adventure-history">
       <h4>Adventure Log</h4>
-      <div class="events-list" #adventureLog>
+      <div class="events-list" #adventureLog (scroll)="onAdventureLogScroll($event)">
+
+        <!-- Loading indicator for older events -->
+        <div *ngIf="isLoadingMore" class="loading-more">
+          <div class="loading-spinner"></div>
+          <span>Loading older events...</span>
+        </div>
+
         <!-- Initial prompt if no events yet -->
-        <div *ngIf="currentAdventure.events.length === 0" class="event ai-event">
+        <div *ngIf="events.length === 0 && !loadingEvents" class="event ai-event">
           <div class="event-header">
             <span class="event-author">🎭 Dungeon Master</span>
             <span class="event-timestamp">{{ currentAdventure.startedAt | date:'short' }}</span>
@@ -140,16 +144,7 @@
         </div>
 
         <!-- Event history -->
-        <div *ngFor="let event of currentAdventure.events" class="event-group">
-          <!-- Player input -->
-          <div *ngIf="event.playerInput" class="event player-event">
-            <div class="event-header">
-              <span class="event-author">⚔️ {{ selectedCharacter?.name }}</span>
-              <span class="event-timestamp">{{ event.timestamp | date:'short' }}</span>
-            </div>
-            <div class="event-content">{{ event.playerInput }}</div>
-          </div>
-
+        <div *ngFor="let event of events" class="event-group">
           <!-- AI response -->
           <div *ngIf="event.aiResponse" class="event ai-event">
             <div class="event-header">
@@ -158,13 +153,42 @@
             </div>
             <div class="event-content">{{ event.aiResponse }}</div>
           </div>
+
+          <!-- Player input -->
+          <div *ngIf="event.playerInput" class="event player-event">
+            <div class="event-header">
+              <span class="event-author">⚔️ {{ selectedCharacter?.name }}</span>
+              <span class="event-timestamp">{{ event.timestamp | date:'short' }}</span>
+            </div>
+            <div class="event-content">{{ event.playerInput }}</div>
+          </div>
+        </div>
+
+        <!-- Loading indicator for initial events -->
+        <div *ngIf="loadingEvents" class="loading-events">
+          <div class="loading-spinner"></div>
+          <span>Loading adventure events...</span>
         </div>
       </div>
     </div>
 
     <!-- Turn Input -->
     <div *ngIf="isAdventureActive()" class="turn-input">
-      <h4>Your Action</h4>
+      <div class="turn-header">
+        <div class="turn-title">
+          <h4>Your Action</h4>
+        </div>
+        <div class="session-meta">
+          <span class="character-info">
+            <span class="character-icon">🧙‍♂️</span>
+            {{ selectedCharacter?.name }}
+          </span>
+          <span class="turn-info">Turn {{ currentAdventure.currentTurnNumber }}</span>
+          <span class="status-badge" [class]="'status-' + currentAdventure.status">
+            {{ currentAdventure.status === 'Active' ? 'Active' : currentAdventure.status === 'Completed' ? 'Completed' : 'Paused' }}
+          </span>
+        </div>
+      </div>
       <form (ngSubmit)="submitTurn()" class="turn-form">
         <textarea
           [(ngModel)]="playerInput"
@@ -189,8 +213,8 @@
     <!-- Adventure Completed Message -->
     <div *ngIf="!isAdventureActive()" class="adventure-completed">
       <div class="completed-icon">🏆</div>
-      <h4>Adventure {{ currentAdventure.status === 1 ? 'Completed' : 'Paused' }}</h4>
-      <p>This adventure has {{ currentAdventure.status === 1 ? 'reached its conclusion' : 'been paused' }}.</p>
+      <h4>Adventure {{ currentAdventure.status === 'Completed' ? 'Completed' : 'Paused' }}</h4>
+      <p>This adventure has {{ currentAdventure.status === 'Completed' ? 'reached its conclusion' : 'been paused' }}.</p>
     </div>
   </div>
 

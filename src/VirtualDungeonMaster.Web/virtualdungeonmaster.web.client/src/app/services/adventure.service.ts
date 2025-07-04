@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AdventureSession, NarrativeEvent, StartSessionRequest, SubmitTurnRequest, AdventureStatus } from '../models/adventure.model';
+import { AdventureSession, AdventureSessionSummary, NarrativeEvent, StartSessionRequest, SubmitTurnRequest, AdventureStatus } from '../models/adventure.model';
 
 /**
  * Service for managing adventure sessions and gameplay
@@ -15,10 +15,10 @@ export class AdventureService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Get adventure sessions for a character
+   * Get adventure session summaries for a character
    */
-  getCharacterSessions(characterId: number): Observable<AdventureSession[]> {
-    return this.http.get<AdventureSession[]>(`${this.baseUrl}/character/${characterId}/sessions`);
+  getCharacterSessions(characterId: number): Observable<AdventureSessionSummary[]> {
+    return this.http.get<AdventureSessionSummary[]>(`${this.baseUrl}/character/${characterId}/sessions`);
   }
 
   /**
@@ -26,6 +26,17 @@ export class AdventureService {
    */
   getSession(sessionId: number): Observable<AdventureSession> {
     return this.http.get<AdventureSession>(`${this.baseUrl}/session/${sessionId}`);
+  }
+
+  /**
+   * Get events for a specific adventure session with pagination
+   */
+  getSessionEvents(sessionId: number, skip: number = 0, take: number = 20): Observable<NarrativeEvent[]> {
+    const params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('take', take.toString());
+
+    return this.http.get<NarrativeEvent[]>(`${this.baseUrl}/session/${sessionId}/events`, { params });
   }
 
   /**

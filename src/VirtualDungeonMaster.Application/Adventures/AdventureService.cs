@@ -82,5 +82,12 @@ namespace VirtualDungeonMaster.Application.Adventures
 
             return sessions;
         }
+
+        public async Task<string> SummarizeAsync(AdventureSession session, CancellationToken cancellationToken)
+        {
+            var summary = await _aiService.GenerateRecapAsync(session, cancellationToken);
+
+            return summary;
+        }
     }
 }
